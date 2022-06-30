@@ -1,1 +1,40 @@
-<p>registration works!</p>
+<form class="form" required [formGroup]="form">
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" />
+    <app-message-errors *ngIf="error" [control]="form.get('name')"></app-message-errors>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Age</mat-label>
+    <input type="number" matInput formControlName="age" />
+    <app-message-errors *ngIf="error" [control]="form.get('age')"></app-message-errors>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Genre</mat-label>
+    <mat-select formControlName="genre">
+      <mat-option *ngFor="let gen of genres" [value]="gen.value">
+        {{ gen.viewValue }}
+      </mat-option>
+    </mat-select>
+    <app-message-errors *ngIf="error" [control]="form.get('genre')"></app-message-errors>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" *ngIf="otherGenre">
+    <mat-label>Other genre</mat-label>
+    <input matInput formControlName="otherGenre" />
+    <app-message-errors *ngIf="error" [control]="form.get('otherGenre')"></app-message-errors>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Size dick</mat-label>
+    <input type="number" matInput formControlName="sizeDick" mask="000"/>
+    <!-- <mat-error *ngIf="form.get('sizeDick')?.hasError('required')"
+      >Required</mat-error
+    > -->
+    <app-message-errors *ngIf="error" [control]="form.get('sizeDick')"></app-message-errors>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" (click)="onSend()">Send</button>
+</form>

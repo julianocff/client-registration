@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HomneComponent } from './homne.component';
+import { MessageErrorsComponent } from './message-errors.component';
 
-describe('HomneComponent', () => {
-  let component: HomneComponent;
-  let fixture: ComponentFixture<HomneComponent>;
+describe('MessageErrorsComponent', () => {
+  let component: MessageErrorsComponent;
+  let fixture: ComponentFixture<MessageErrorsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HomneComponent ]
+      declarations: [ MessageErrorsComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HomneComponent);
+    fixture = TestBed.createComponent(MessageErrorsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
