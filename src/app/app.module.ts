@@ -32,7 +32,7 @@ import { MessageErrorsComponent } from './components/message-errors/message-erro
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    NgxMaskModule.forRoot()
+    NgxMaskModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent],
