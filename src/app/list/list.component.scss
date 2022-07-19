@@ -1,0 +1,51 @@
+table {
+  width: 80%;
+  margin-top: 50px;
+  margin: 15px auto;
+}
+
+.table-list {
+}
+
+#icon-color-edit {
+  cursor: pointer;
+  color: rgb(199, 169, 0);
+}
+
+#icon-color-remove {
+  cursor: pointer;
+  color: rgb(182, 0, 0);
+}
+
+.add-button {
+  margin-top: 50px;
+  display: flex;
+  justify-content: flex-end;
+  width: 90%;
+}
+
+.footer {
+  margin-top: 20px;
+  width: 90%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.container-not-record {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 200px auto;
+  width: 50%;
+  height: 20%;
+
+  .header {
+    display: flex;
+    justify-content: center;
+
+    p {
+      font-size: 3rem;
+    }
+    width: 100%;
+  }
+}

@@ -1,0 +1,18 @@
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 200px auto;
+  width: 50%;
+  height: 20%;
+
+  .header {
+    display: flex;
+    justify-content: center;
+
+    p {
+      font-size: 3rem;
+    }
+    width: 100%;
+  }
+}
