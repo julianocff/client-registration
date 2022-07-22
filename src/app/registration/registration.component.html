@@ -7,7 +7,10 @@
       <mat-label>CPF</mat-label>
       <input matInput formControlName="cpf" mask="000.000.000-00" />
     </mat-form-field>
-    <app-message-errors [control]="form.get('cpf')"></app-message-errors>
+    <app-message-errors
+      [messageError]="validations"
+      [control]="form.get('cpf')"
+    ></app-message-errors>
 
     <mat-form-field appearance="fill">
       <mat-label>Name</mat-label>
@@ -51,8 +54,14 @@
     </mat-form-field>
     <app-message-errors [control]="form.get('height')"></app-message-errors>
 
-    <button mat-raised-button color="primary" (click)="onSend()">
+    <button
+      class="button-save"
+      mat-raised-button
+      color="primary"
+      (click)="onSend()"
+    >
       {{ send ? "Send" : "Save" }}
     </button>
+    <button mat-raised-button (click)="onResetForm()">Reset</button>
   </form>
 </div>

@@ -1,3 +1,4 @@
+import { SharedModule } from './shared/shared.module';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgxMaskModule, IConfig } from 'ngx-mask';
@@ -44,6 +45,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
     MatSnackBarModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    SharedModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

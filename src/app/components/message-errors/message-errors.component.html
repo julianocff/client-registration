@@ -1,11 +1,11 @@
 <ng-container *ngIf="control?.invalid && control?.touched">
-  <div class="error" *ngIf="control?.errors?.required">
+  <div class="error">
+    {{ error }}
+  </div>
+  <!-- <div class="error" *ngIf="control?.errors?.required">
     {{ messageError.required }}
   </div>
   <div class="error" *ngIf="control?.hasError('max')">
     {{ messageError.max }}
-  </div>
-  <div class="error" *ngIf="control?.hasError('pattern')">
-    {{ messageError.pattern }}
-  </div>
+  </div>-->
 </ng-container>

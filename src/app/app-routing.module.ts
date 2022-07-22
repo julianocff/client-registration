@@ -10,6 +10,7 @@ const routes: Routes = [
   { path: 'registration', component: RegistrationComponent },
   { path: 'edit/:id', component: RegistrationComponent },
   { path: 'not-found', component: NotFoundComponent },
+  { path: '**', redirectTo: 'not-found' },
 ];
 
 @NgModule({

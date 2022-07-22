@@ -34,7 +34,7 @@ export class ClientService {
 
   public edit(item: Client) {
     const client = this.clients.map((value) => {
-      item.cpf === value.cpf ? (value = item) : (item = item);
+      if (item.cpf === value.cpf) value = item;
       return value;
     });
     localStorage.setItem(storageKey, JSON.stringify(client));

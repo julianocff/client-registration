@@ -11,6 +11,7 @@ import { Component, OnInit } from '@angular/core';
 export class ListComponent implements OnInit {
   public items = this.service.getList();
   public existItems = this.items.length > 0 ? true : false;
+  public isLoading = false;
 
   constructor(private service: ClientService, private router: Router) {}
 
@@ -34,9 +35,20 @@ export class ListComponent implements OnInit {
   public onRemove(item: Client) {
     this.service.remove(item);
     this.dataSource = [...this.items];
+    if (this.dataSource.length === 0) {
+      this.isLoading = true;
+      setTimeout(() => {
+        this.isLoading = false;
+        this.existItems = false;
+      }, 2000);
+    }
   }
 
   public onRemoveAll() {
-    this.service.removeAll();
+    this.isLoading = true;
+    setTimeout(() => {
+      this.service.removeAll();
+      this.isLoading = false;
+    }, 2000);
   }
 }
