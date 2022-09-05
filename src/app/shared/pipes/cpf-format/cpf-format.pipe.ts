@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class CpfFormatPipe implements PipeTransform {
   public transform(value: string): string {
     if (value?.length === 11) {
-      return `(${value.slice(0, 2)}).${value.slice(2, 4)}.${value.slice(4,6)}-${value.slice(6,8)}`;
+      return `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(6,9)}-${value.slice(9,11)}`;
     } else {
       return value;
     }

@@ -1,6 +1,7 @@
+import { ClientService } from './../service/client.service';
+import { Inject, Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { Client } from './../models/client.model';
-import { ClientService } from './../service/client.service';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -8,16 +9,13 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
 })
+@Injectable()
 export class ListComponent implements OnInit {
-  public items = this.service.getList();
-  public existItems = this.items.length > 0 ? true : false;
+  public items: Client[] = [];
+  public existItems = false;
   public isLoading = false;
 
-  constructor(private service: ClientService, private router: Router) {}
-
-  ngOnInit(): void {}
-
-  displayedColumns: string[] = [
+  public displayedColumns: string[] = [
     'cpf',
     'name',
     'age',
@@ -26,29 +24,37 @@ export class ListComponent implements OnInit {
     'height',
     'actions',
   ];
-  dataSource = this.items;
+
+  constructor(
+    @Inject(Injector) private readonly injector: Injector,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.isLoading = true;
+    this.service.getList().subscribe((response) => {
+      this.items = response;
+      this.existItems = this.items.length > 0;
+      this.isLoading = false;
+    });
+  }
 
   public onEdit(item: Client) {
     this.router.navigate([`/edit/${item.cpf}`]);
   }
 
   public onRemove(item: Client) {
-    this.service.remove(item);
-    this.dataSource = [...this.items];
-    if (this.dataSource.length === 0) {
-      this.isLoading = true;
-      setTimeout(() => {
-        this.isLoading = false;
-        this.existItems = false;
-      }, 2000);
-    }
+    this.service.remove(item).subscribe(() => {});
   }
 
   public onRemoveAll() {
     this.isLoading = true;
-    setTimeout(() => {
-      this.service.removeAll();
+    this.service.removeAll().subscribe(() => {
       this.isLoading = false;
-    }, 2000);
+    });
+  }
+
+  private get service() {
+    return this.injector.get(ClientService);
   }
 }

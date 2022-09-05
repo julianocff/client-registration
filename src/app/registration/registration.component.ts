@@ -1,6 +1,9 @@
+import { of } from 'rxjs';
 import { Client, Genre as GenreClient } from './../models/client.model';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { cpf } from 'cpf-cnpj-validator';
 import { ClientService } from './../service/client.service';
+import { Inject, Injectable, Injector } from '@angular/core';
 import {
   Genre,
   height,
@@ -18,6 +21,9 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+@Injectable({
+  providedIn: 'root',
+})
 @Component({
   selector: 'app-registration',
   templateUrl: './registration.component.html',
@@ -33,14 +39,13 @@ export class RegistrationComponent implements OnInit {
   public otherGenre = false;
   public error = false;
   public item = {};
-  public listItems = this.service.getList();
   public send = true;
   public id: string;
   public isLoading = false;
   public validations: ValidationErrors = {};
 
   constructor(
-    private service: ClientService,
+    @Inject(Injector) private readonly injector: Injector,
     private router: Router,
     private snackBar: MatSnackBar,
     private activatedRoute: ActivatedRoute
@@ -61,7 +66,6 @@ export class RegistrationComponent implements OnInit {
 
   public ngOnInit(): void {
     this.form.get('genre')?.valueChanges.subscribe((value) => {
-      // codigo abaixo comentado refere a esse cara aqui, seria mais forma mt mais compacta
       this.otherGenre = value === GenreClient.OTHERS;
 
       if (this.otherGenre) {
@@ -69,28 +73,15 @@ export class RegistrationComponent implements OnInit {
       } else {
         this.form.controls['otherGenre'].clearValidators();
       }
-
-      // const isOthers = (value: any) => {
-      //   if (value === 'others') {
-      //     return true;
-      //   }
-      //   return value === 'others';
-      // };
-      // this.otherGenre = false;
-      // this.otherGenre = isOthers(value);
-      // if (isOthers(value)) {
-      //   this.otherGenre = true;
-      // }
     });
 
     this.id = this.activatedRoute.snapshot.params['id'];
     if (this.id) {
-      const existId = this.service.getById(this.id);
+      this.service.getById(this.id).subscribe();
 
-      if (!existId) {
-        this.router.navigate(['/not-found']);
-        return;
-      }
+      this.service.getById(this.id).subscribe((response) => {
+        if (!response) this.router.navigate(['/not-found']);
+      });
 
       this.form.get('genre')?.valueChanges.subscribe((value) => {
         this.otherGenre = value === GenreClient.OTHERS;
@@ -101,8 +92,10 @@ export class RegistrationComponent implements OnInit {
 
       this.form.get('cpf')?.disable();
       this.send = false;
-      this.item = { ...this.service.getById(this.id) };
-      this.form.patchValue(this.item);
+      this.service.getById(this.id).subscribe((response) => {
+        this.item = response;
+        this.form.patchValue(this.item);
+      });
     }
 
     this.validations = {
@@ -123,7 +116,7 @@ export class RegistrationComponent implements OnInit {
     };
   }
 
-  private redirectToList() {
+  public redirectToList() {
     if (this.send) {
       const snackBarRefSend = this.snackBar.open(
         MessagesRegistrationSend.SUCCESSFULLY,
@@ -145,29 +138,42 @@ export class RegistrationComponent implements OnInit {
 
   public onSend() {
     if (this.form.invalid) {
-      console.log(this.form);
       this.form.markAllAsTouched();
       return;
     }
     if (!this.id) {
       this.isLoading = true;
-      setTimeout(() => {
-        this.service.save(this.form.value);
-        this.isLoading = false;
-        this.redirectToList();
-      }, 2000);
+      const payload: Client = { ...this.form.value };
+      const payloadStream = of(payload);
+      payloadStream
+        .pipe(
+          map((value) => {
+            return { ...value };
+          }),
+          switchMap((value) => {
+            return this.service.save(value);
+          }),
+          tap(() => {
+            this.isLoading = false;
+          })
+        )
+        .subscribe((value) => {
+          this.redirectToList();
+        });
     } else {
       this.isLoading = true;
-      setTimeout(() => {
-        // getRawValue ira pegar todos os valores do form(tanto enable como disable)
-        this.service.edit(this.form.getRawValue());
+      this.service.edit(this.form.getRawValue()).subscribe(() => {
         this.isLoading = false;
         this.redirectToList();
-      }, 2000);
+      });
     }
   }
 
   public onResetForm() {
     this.form.reset();
+  }
+
+  private get service() {
+    return this.injector.get(ClientService);
   }
 }

@@ -1,5 +1,9 @@
+import { ListComponent } from './../list/list.component';
+import { RegistrationComponent } from './../registration/registration.component';
+import { map, tap } from 'rxjs/operators';
 import { Client } from './../models/client.model';
-import { Injectable, Input } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { Observable, Subscriber } from 'rxjs';
 
 const storageKey = 'clientsKey';
 
@@ -9,39 +13,70 @@ const storageKey = 'clientsKey';
 export class ClientService {
   private clients: Client[] = [];
 
-  constructor() {}
+  constructor(private registrationComponent: RegistrationComponent) {}
 
-  public save(data: Client) {
-    this.clients.push(data);
-    localStorage.setItem(storageKey, JSON.stringify(this.clients));
-    return this.clients;
+  public save(data: Client): Observable<Client> {
+    return new Observable((subscriber) => {
+      this.clients.find((cpf) => {
+        if (cpf.cpf === data.cpf) {
+          this.registrationComponent.redirectToList();
+          return;
+        }
+      });
+      setTimeout(() => {
+        this.clients.push(data);
+        localStorage.setItem(storageKey, JSON.stringify(this.clients));
+        subscriber.next(data);
+      }, 1000);
+    });
   }
 
-  public getList() {
-    this.clients = JSON.parse(localStorage.getItem(storageKey) || '[]');
-    return this.clients;
+  public getList(): Observable<Client[]> {
+    return new Observable((subscriber) => {
+      setTimeout(() => {
+        this.clients = JSON.parse(localStorage.getItem(storageKey) || '[]');
+        subscriber.next(this.clients);
+      }, 1000);
+    });
   }
 
   public remove(item: Client) {
-    this.clients.splice(this.clients.indexOf(item), 1);
-    localStorage.setItem(storageKey, JSON.stringify(this.clients));
-    return this.clients;
+    return new Observable((subscriber: Subscriber<any>) => {
+      this.clients.splice(this.clients.indexOf(item), 1);
+      localStorage.setItem(storageKey, JSON.stringify(this.clients));
+      subscriber.next(this.clients);
+      subscriber.next(window.location.reload());
+    });
   }
 
   public getById(id: any) {
-    return this.clients.find((item) => item.cpf === id);
+    return new Observable((subscriber: Subscriber<any>) => {
+      setTimeout(() => {
+        subscriber.next(this.clients.find((item) => item.cpf === id));
+      }, 1000);
+    });
   }
 
   public edit(item: Client) {
-    const client = this.clients.map((value) => {
-      if (item.cpf === value.cpf) value = item;
-      return value;
+    return new Observable((subscriber) => {
+      setTimeout(() => {
+        const client = this.clients.map((value) => {
+          if (item.cpf === value.cpf) value = item;
+          return value;
+        });
+        subscriber.next(
+          localStorage.setItem(storageKey, JSON.stringify(client))
+        );
+      }, 1000);
     });
-    localStorage.setItem(storageKey, JSON.stringify(client));
   }
 
   public removeAll() {
-    localStorage.clear();
-    window.location.reload();
+    return new Observable((subscriber) => {
+      setTimeout(() => {
+        localStorage.clear();
+        subscriber.next(window.location.reload());
+      }, 1000);
+    });
   }
 }
